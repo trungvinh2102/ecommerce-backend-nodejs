@@ -55,7 +55,6 @@ class AccessService {
         }
 
         const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
-        console.log(`Created Token Success::`, tokens);
 
         return {
           code: 201,
@@ -72,6 +71,7 @@ class AccessService {
       }
 
     } catch (error) {
+      console.error(error)
       return {
         code: 'xxx',
         message: error.message,
