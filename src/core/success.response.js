@@ -6,11 +6,11 @@ class SucessResponse {
 
   constructor({ message, statusCode = StatusCodes.OK, reasonStatusCode = ReasonPhrases.OK, metadata = {} }) {
     this.message = !message ? reasonStatusCode : message
-    this.statusCode = statusCode
+    this.status = statusCode
     this.metadata = metadata
   }
 
-  send(req, headers = {}) {
+  send(res, headers = {}) {
     return res.status(this.status).json(this)
   }
 }
@@ -31,5 +31,6 @@ class CREATED extends SucessResponse {
 
 module.exports = {
   OK,
-  CREATED
+  CREATED,
+  SucessResponse
 }
