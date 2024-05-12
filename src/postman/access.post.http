@@ -1,11 +1,10 @@
 @url_dev = http://localhost:3090/v1/api/
 
-POST {{url_dev}}shop/signup
+POST {{url_dev}}shop/login
 Content-Type: application/json
 x-api-key: c4dde35e7defcae22a537a41a2198bf8fbc02a5cab369aa07971c3ff2cb5420f787aa2716435a8179592790102163650c04cf1a7d61d7b450662edad8a84e81e
 
 {
-  "name": "Hai Yen",
-  "email": "haiyen09@gmail.com",
+  "email": "haiyen01@gmail.com",
   "password": "132"
 }
