@@ -20,7 +20,7 @@ const keyTokenSchema = new Schema({
     type: String,
     required: true
   },
-  refreshTokenUsed: {
+  refreshTokensUsed: {
     type: Array,
     default: []
   },

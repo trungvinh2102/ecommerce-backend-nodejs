@@ -21,7 +21,7 @@ const RoleShop = {
 
 class AccessService {
 
-  // sign up
+  // -----------------sign up---------------------------
   static signUp = async ({ email, password, name }) => {
     // 1. check email
     const holderShop = await shopModel.findOne({ email }).lean()
@@ -67,7 +67,7 @@ class AccessService {
 
   }
 
-  // login
+  // -------------------login---------------------------
   static login = async ({ email, password, refreshToken = null }) => {
     // 1. check email in database
     const foundShop = await findByEmail({ email })
@@ -97,6 +97,14 @@ class AccessService {
       tokens
     }
   }
+
+  // --------------------logout-------------------------
+  static logout = async (keyStore) => {
+    const delKey = await KeyTokenService.removeKeyById(keyStore._id)
+    console.log("AccessService ~ logout = ~ delKey:", { delKey });
+    return delKey
+  }
+
 }
 
 module.exports = {

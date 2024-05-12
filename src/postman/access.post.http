@@ -1,10 +1,13 @@
 @url_dev = http://localhost:3090/v1/api/
 
-POST {{url_dev}}shop/login
+POST {{url_dev}}shop/logout
 Content-Type: application/json
 x-api-key: c4dde35e7defcae22a537a41a2198bf8fbc02a5cab369aa07971c3ff2cb5420f787aa2716435a8179592790102163650c04cf1a7d61d7b450662edad8a84e81e
+x-client-id: 6640ad981d8ae69aee0f11a4
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjQwYWQ5ODFkOGFlNjlhZWUwZjExYTQiLCJlbWFpbCI6ImhhaXllbjA4QGdtYWlsLmNvbSIsImlhdCI6MTcxNTUxNDc3NiwiZXhwIjoxNzE1Njg3NTc2fQ.wsLrGV4-M8khKKbzZiu8sOHBKEXkO0vSvOwWel-2eIk
 
-{
-  "email": "haiyen01@gmail.com",
-  "password": "132"
-}
+# {
+#   "name": "Hai Yen",
+#   "email": "haiyen08@gmail.com",
+#   "password": "132"
+# }
