@@ -10,7 +10,8 @@ const KeyTokenService = require('../services/keyToken.service')
 const HEADER = {
   API_KEY: 'x-api-key',
   CLIENT_ID: 'x-client-id',
-  AUTHORIZATION: "authorization"
+  AUTHORIZATION: "authorization",
+  REFRESHTOKEN: 'x-refreshtoken-id'
 }
 
 const createTokenPair = async (payload, publicKey, privateKey) => {
@@ -48,6 +49,24 @@ const authentication = asyncHandler(async (req, res, next) => {
   // 2. check keyStore with this userId
   const keyStore = await KeyTokenService.findByUserId(userId)
   if (!keyStore) throw new NotFoundError('Not Found keyStore!')
+
+  //
+  if (req.headers[HEADER.REFRESHTOKEN]) {
+    try {
+      // 4. verifyToken
+      const refreshToken = req.headers[HEADER.REFRESHTOKEN]
+      const decodeUser = JWT.verify(refreshToken, keyStore.privateKey)
+      // 5. check user in database
+      if (userId !== decodeUser.userId) throw new AuthFailureError('Invalid UserId')
+      req.keyStore = keyStore
+      req.user = decodeUser
+      req.refreshToken = refreshToken
+      // 6
+      return next()
+    } catch (error) {
+      throw error
+    }
+  }
 
   // 3. get accessToken
   const accessToken = req.headers[HEADER.AUTHORIZATION]
