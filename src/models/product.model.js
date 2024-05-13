@@ -71,6 +71,6 @@ const electronicsSchema = new Schema({
 
 module.exports = {
   product: model(DOCUMENT_NAME, productSchema),
-  electronic: model('Electronics', productSchema),
-  clothing: model('Clothings', productSchema)
+  electronic: model('Electronics', electronicsSchema),
+  clothing: model('Clothing', clothingSchema)
 }
