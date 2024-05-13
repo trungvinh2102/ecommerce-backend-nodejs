@@ -8,6 +8,7 @@ const router = express.Router()
 
 // sign up
 router.post('/shop/signup', asyncHandler(accessController.signUp))
+
 // login
 router.post('/shop/login', asyncHandler(accessController.login))
 
@@ -16,5 +17,8 @@ router.use(authentication)
 
 // logout
 router.post('/shop/logout', asyncHandler(accessController.logout))
+
+//handle refresh token
+router.post('/shop/handleRefreshtoken', asyncHandler(accessController.handleRefreshToken))
 
 module.exports = router
