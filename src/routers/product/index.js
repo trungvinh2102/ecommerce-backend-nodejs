@@ -12,4 +12,7 @@ router.use(authentication)
 // product
 router.post('', asyncHandler(productController.createProduct))
 
+// query
+router.get('/drafts/all', asyncHandler(productController.getAllDraftsForShop))
+
 module.exports = router

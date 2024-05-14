@@ -1,9 +1,12 @@
 'use strict'
 
 const { BadRequestError } = require('../core/error.response')
-const { product, clothing, electronic, furniture } = require('../models/product.model')
+const { product, clothing, electronic, furniture } = require('../models/product.model');
+const { findAllDraftsForShop } = require('../models/repositories/product.repo');
 
 class ProductFactory {
+
+  // --------------create new product-----------------
   static async createProduct(type, payload) {
     switch (type) {
       case "Electronic":
@@ -15,6 +18,13 @@ class ProductFactory {
       default:
         throw new BadRequestError(`Invalid Product Types ${type}`)
     }
+  }
+
+  // ------------------get all draft---------------------
+  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true }
+    return await findAllDraftsForShop({ query, limit, skip })
+
   }
 }
 
