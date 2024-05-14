@@ -13,6 +13,7 @@ class SucessResponse {
   send(res, headers = {}) {
     return res.status(this.status).json(this)
   }
+
 }
 
 class OK extends SucessResponse {
@@ -20,6 +21,7 @@ class OK extends SucessResponse {
   constructor({ message, metadata }) {
     super({ message, metadata })
   }
+
 }
 
 class CREATED extends SucessResponse {
@@ -27,6 +29,7 @@ class CREATED extends SucessResponse {
   constructor({ message, statusCode = StatusCodes.CREATED, reasonStatusCode = ReasonPhrases.CREATED, metadata }) {
     super({ message, statusCode, reasonStatusCode, metadata })
   }
+
 }
 
 module.exports = {

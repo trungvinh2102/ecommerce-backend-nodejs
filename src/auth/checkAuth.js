@@ -1,11 +1,8 @@
 'use strict'
 
 const { findById } = require("../services/apiKey.service")
+const { HEADER } = require('../contants/index')
 
-const HEADER = {
-  API_KEY: 'x-api-key',
-  AUTHORIZATION: "authorization"
-}
 
 const apiKey = async (req, res, next) => {
   try {

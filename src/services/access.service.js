@@ -7,18 +7,10 @@ const KeyTokenService = require("./keyToken.service")
 const { createTokenPair, verifyJWT } = require("../auth/authUtils")
 const { getInfoData } = require("../utils")
 const { BadRequestError, AuthFailureError, ForbiddenError } = require("../core/error.response")
-
+const { ROLESHOP } = require('../contants/index')
 
 // service
 const { findByEmail } = require('./shop.service')
-const e = require("express")
-
-const RoleShop = {
-  SHOP: '1',
-  WRITER: '2',
-  EDITOR: '3',
-  ADMIN: '4'
-}
 
 class AccessService {
 
@@ -33,7 +25,7 @@ class AccessService {
 
     // 3. create new shop
     const newShop = await shopModel.create({
-      email, name, password: passwordHash, roles: [RoleShop.SHOP]
+      email, name, password: passwordHash, roles: [ROLESHOP.SHOP]
     })
 
     if (newShop) {
@@ -107,7 +99,6 @@ class AccessService {
   }
 
   // -----------------handler refresh token--------------
-
   static handleRefreshToken = async ({ keyStore, user, refreshToken }) => {
 
     const { userId, email } = user;

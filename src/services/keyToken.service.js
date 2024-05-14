@@ -1,6 +1,5 @@
 'use strict'
 
-const { Types } = require("mongoose")
 const keyTokenModel = require("../models/keyToken.model")
 
 class KeyTokenService {

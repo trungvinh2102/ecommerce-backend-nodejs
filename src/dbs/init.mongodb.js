@@ -30,6 +30,7 @@ class Database {
     }
     return Database.instance
   }
+
 }
 
 const instanceMongodb = Database.getInstance()
