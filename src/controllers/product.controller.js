@@ -17,6 +17,26 @@ class ProductController {
     }).send(res)
   }
 
+  // -----------------------PUT--------------------------
+  publishProductByShop = async (req, res, next) => {
+    new SucessResponse({
+      message: "publishProductByShop successfully!",
+      metadata: await ProductFactory.publishProductByShop({
+        product_id: req.params.id,
+        product_shop: req.user.userId,
+      })
+    }).send(res)
+  }
+  unPublishProductByShop = async (req, res, next) => {
+    new SucessResponse({
+      message: "unPublishProductByShop successfully!",
+      metadata: await ProductFactory.unPublishProductByShop({
+        product_id: req.params.id,
+        product_shop: req.user.userId,
+      })
+    }).send(res)
+  }
+
 
   // -----------------get all draft----------------------
   getAllDraftsForShop = async (req, res, next) => {
@@ -27,6 +47,25 @@ class ProductController {
       })
     }).send(res)
   }
+
+  // ---------------get all publish---------------------
+  getAllPublishForShop = async (req, res, next) => {
+    new SucessResponse({
+      message: "Get list Publish Successfully!",
+      metadata: await ProductFactory.findAllPushlishForShop({
+        product_shop: req.user.userId,
+      })
+    }).send(res)
+  }
+
+  // ---------------get all publish---------------------
+  getListSearchProduct = async (req, res, next) => {
+    new SucessResponse({
+      message: "Get list Publish Successfully!",
+      metadata: await ProductFactory.searchProductByUser(req.params)
+    }).send(res)
+  }
+
 }
 
 module.exports = new ProductController()

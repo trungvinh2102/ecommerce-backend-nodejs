@@ -68,12 +68,14 @@ const productSchema = new Schema(
     collection: COLLECTION_NAME
   });
 
+// create index for search
+productSchema.index({ product_name: 'text', product_description: 'text' })
+
 // Middleware: runs before .save(), and .create()...
 productSchema.pre('save', function (next) {
   this.product_slug = slugify(this.product_name, { lower: true })
   next()
 })
-
 
 
 // define the product type = clothings
