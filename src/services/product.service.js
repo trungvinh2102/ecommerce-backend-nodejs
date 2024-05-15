@@ -7,7 +7,9 @@ const {
   publishProductByShop,
   findAllPushlishForShop,
   unPublishProductByShop,
-  searchProductByUser }
+  searchProductByUser,
+  findAllProducts,
+  findProduct }
   = require('../models/repositories/product.repo');
 
 class ProductFactory {
@@ -42,15 +44,28 @@ class ProductFactory {
 
   }
 
-  // ---------------------pulish product--------------------
+  // --------------------get pulish product------------------
   static async findAllPushlishForShop({ product_shop, limit = 50, skip = 0 }) {
     const query = { product_shop, isPublished: true }
-    return await findAllDraftsForShop({ query, limit, skip })
+    return await findAllPushlishForShop({ query, limit, skip })
   }
 
   //---------------------search product---------------------
   static async searchProductByUser({ keySearch }) {
     return await searchProductByUser({ keySearch })
+  }
+
+  // -----------------find all product----------------------
+  static async findAllProducts({ limit = 50, sort = 'ctime', page = 1, filter = { isPublished: true } }) {
+    return await findAllProducts({
+      limit, sort, filter, page,
+      select: ['product_name', 'product_price', 'product_thumb']
+    })
+  }
+
+  // -----------------find product----------------------
+  static async findProduct({ product_id }) {
+    return await findProduct({ product_id, unSelect: ['__v'] })
   }
 }
 
