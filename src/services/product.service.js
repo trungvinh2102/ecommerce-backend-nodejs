@@ -1,7 +1,8 @@
 'use strict'
 
-const { BadRequestError } = require('../core/error.response')
-const { product, clothing, electronic, furniture } = require('../models/product.model');
+const { BadRequestError } = require('../core/error.response');
+const { product, clothing, electronic, furniture, watch } = require('../models/product.model');
+const { insertInventory } = require('../models/repositories/inventory.repo');
 const {
   findAllDraftsForShop,
   publishProductByShop,
@@ -10,8 +11,8 @@ const {
   searchProductByUser,
   findAllProducts,
   findProduct,
-  updateProductById }
-  = require('../models/repositories/product.repo');
+  updateProductById
+} = require('../models/repositories/product.repo');
 const { removeUndefindedObject, updateNestedObjectParser } = require('../utils');
 
 class ProductFactory {
@@ -24,6 +25,8 @@ class ProductFactory {
       case "Clothing":
         return new Clothing(payload).createProduct();
       case "Furniture":
+        return new Furniture(payload).createProduct();
+      case "Watch":
         return new Furniture(payload).createProduct();
       default:
         throw new BadRequestError(`Invalid Product Types ${type}`)
@@ -39,6 +42,8 @@ class ProductFactory {
         return new Clothing(payload).updateProduct(productId);
       case "Furniture":
         return new Furniture(payload).updateProduct(productId);
+      case "Watch":
+        return new Furniture(payload).createProduct(productId);
       default:
         throw new BadRequestError(`Invalid Product Types ${type}`)
     }
@@ -104,7 +109,17 @@ class Product {
 
   // ---------------create new product-----------------
   async createProduct(product_id) {
-    return await product.create({ ...this, _id: product_id })
+    const newProduct = await product.create({ ...this, _id: product_id })
+
+    if (newProduct) {
+      await insertInventory({
+        productId: newProduct._id,
+        shopId: this.product_shop,
+        stock: this.product_quantity
+      })
+    }
+
+    return newProduct
   }
 
   //---------------update product-------------------------
@@ -151,6 +166,8 @@ class Clothing extends Product {
 
 // define sub-class for different product type = electronic
 class Electronic extends Product {
+
+  // ------------------create new product---------------------
   async createProduct() {
     const newElectronic = await electronic.create({
       ...this.product_attributes,
@@ -163,10 +180,30 @@ class Electronic extends Product {
 
     return newProduct
   }
+
+  // ------------------update product---------------------
+  async updateProduct(productId) {
+    // 1. remove attr has null underfined
+    const objParams = removeUndefindedObject(this)
+    //2. check update
+    if (objParams.product_attributes) {
+      // update child
+      await updateProductById({
+        productId,
+        bodyUpdate: updateNestedObjectParser(objParams.product_attributes),
+        model: electronic
+      })
+    }
+    // update parent
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objParams))
+    return updateProduct
+  }
 }
 
 // define sub-class for different product type = furniture
 class Furniture extends Product {
+
+  //------------------create new product------------------
   async createProduct() {
     const newFurniture = await furniture.create({
       ...this.product_attributes,
@@ -178,6 +215,60 @@ class Furniture extends Product {
     if (!newProduct) throw new BadRequestError('Create new Product error')
 
     return newProduct
+  }
+
+  // ------------------update product---------------------
+  async updateProduct(productId) {
+    // 1. remove attr has null underfined
+    const objParams = removeUndefindedObject(this)
+    //2. check update
+    if (objParams.product_attributes) {
+      // update child
+      await updateProductById({
+        productId,
+        bodyUpdate: updateNestedObjectParser(objParams.product_attributes),
+        model: furniture
+      })
+    }
+    // update parent
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objParams))
+    return updateProduct
+  }
+}
+
+// define sub-class for different product type = watch
+class Watch extends Product {
+
+  // -------------------create new product----------------
+  async createProduct() {
+    const newWatch = await watch.create({
+      ...this.product_attributes,
+      product_shop: this.product_shop
+    })
+    if (!newWatch) throw new BadRequestError('Create new Furniture error');
+
+    const newProduct = await super.createProduct(newWatch._id)
+    if (!newProduct) throw new BadRequestError('Create new Product error')
+
+    return newProduct
+  }
+
+  // ------------------update product---------------------
+  async updateProduct(productId) {
+    // 1. remove attr has null underfined
+    const objParams = removeUndefindedObject(this)
+    //2. check update
+    if (objParams.product_attributes) {
+      // update child
+      await updateProductById({
+        productId,
+        bodyUpdate: updateNestedObjectParser(objParams.product_attributes),
+        model: watch
+      })
+    }
+    // update parent
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objParams))
+    return updateProduct
   }
 }
 
