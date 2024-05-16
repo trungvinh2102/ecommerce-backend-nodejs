@@ -3,7 +3,7 @@
 const { Schema, model, Types } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = "Inventory"
-const COLLECTION_NAME = "Inventories"
+const COLLECTION_NAME = "inventories"
 
 const inventorySchema = new Schema(
   {

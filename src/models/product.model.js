@@ -4,7 +4,7 @@ const { Schema, model } = require('mongoose')
 const slugify = require('slugify')
 
 const DOCUMENT_NAME = "Product"
-const COLLECTION_NAME = "Products"
+const COLLECTION_NAME = "products"
 
 const productSchema = new Schema(
   {

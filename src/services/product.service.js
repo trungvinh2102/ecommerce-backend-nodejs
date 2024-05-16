@@ -27,7 +27,7 @@ class ProductFactory {
       case "Furniture":
         return new Furniture(payload).createProduct();
       case "Watch":
-        return new Furniture(payload).createProduct();
+        return new Watch(payload).createProduct();
       default:
         throw new BadRequestError(`Invalid Product Types ${type}`)
     }
@@ -43,7 +43,7 @@ class ProductFactory {
       case "Furniture":
         return new Furniture(payload).updateProduct(productId);
       case "Watch":
-        return new Furniture(payload).createProduct(productId);
+        return new Watch(payload).createProduct(productId);
       default:
         throw new BadRequestError(`Invalid Product Types ${type}`)
     }
