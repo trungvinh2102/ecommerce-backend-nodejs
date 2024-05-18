@@ -15,7 +15,7 @@ const {
 } = require('../models/repositories/product.repo');
 const { removeUndefindedObject, updateNestedObjectParser } = require('../utils');
 
-class ProductFactory {
+class ProductService {
 
   // --------------create new product-----------------
   static async createProduct(type, payload) {
@@ -272,4 +272,4 @@ class Watch extends Product {
   }
 }
 
-module.exports = ProductFactory
+module.exports = ProductService

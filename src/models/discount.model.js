@@ -39,11 +39,15 @@ const discountSchema = new Schema(
       type: Number,
       required: true
     },
-    discount_users_count: {
+    discount_uses_count: {
       type: Number,
       required: true
     },
-    discount_max_per_used: {
+    discount_users_used: {
+      type: Array,
+      default: []
+    },
+    discount_max_uses_per_user: {
       type: Array,
       default: []
     },
@@ -76,5 +80,5 @@ const discountSchema = new Schema(
 
 //Export the model
 module.exports = {
-  inventory: model(DOCUMENT_NAME, discountSchema)
+  discount: model(DOCUMENT_NAME, discountSchema)
 }

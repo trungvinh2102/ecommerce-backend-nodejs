@@ -1,7 +1,7 @@
 'use strict'
 
 const { SucessResponse } = require("../core/success.response")
-const ProductFactory = require("../services/product.service")
+const ProductService = require("../services/product.service")
 
 
 class ProductController {
@@ -10,7 +10,7 @@ class ProductController {
   createProduct = async (req, res, next) => {
     new SucessResponse({
       message: "Create new product successfully!",
-      metadata: await ProductFactory.createProduct(req.body.product_type, {
+      metadata: await ProductService.createProduct(req.body.product_type, {
         ...req.body,
         product_shop: req.user.userId,
       })
@@ -21,7 +21,7 @@ class ProductController {
   updateProduct = async (req, res, next) => {
     new SucessResponse({
       message: "Update product successfully!",
-      metadata: await ProductFactory.updateProduct(req.body.product_type, req.params.productId, {
+      metadata: await ProductService.updateProduct(req.body.product_type, req.params.productId, {
         ...req.body,
         product_shop: req.user.userId,
       })
@@ -32,7 +32,7 @@ class ProductController {
   publishProductByShop = async (req, res, next) => {
     new SucessResponse({
       message: "publishProductByShop successfully!",
-      metadata: await ProductFactory.publishProductByShop({
+      metadata: await ProductService.publishProductByShop({
         product_id: req.params.id,
         product_shop: req.user.userId,
       })
@@ -41,7 +41,7 @@ class ProductController {
   unPublishProductByShop = async (req, res, next) => {
     new SucessResponse({
       message: "unPublishProductByShop successfully!",
-      metadata: await ProductFactory.unPublishProductByShop({
+      metadata: await ProductService.unPublishProductByShop({
         product_id: req.params.id,
         product_shop: req.user.userId,
       })
@@ -53,7 +53,7 @@ class ProductController {
   getAllDraftsForShop = async (req, res, next) => {
     new SucessResponse({
       message: "Get list Draft Successfully!",
-      metadata: await ProductFactory.findAllDraftsForShop({
+      metadata: await ProductService.findAllDraftsForShop({
         product_shop: req.user.userId,
       })
     }).send(res)
@@ -63,7 +63,7 @@ class ProductController {
   getAllPublishForShop = async (req, res, next) => {
     new SucessResponse({
       message: "Get list Publish Successfully!",
-      metadata: await ProductFactory.findAllPushlishForShop({
+      metadata: await ProductService.findAllPushlishForShop({
         product_shop: req.user.userId,
       })
     }).send(res)
@@ -73,7 +73,7 @@ class ProductController {
   getListSearchProduct = async (req, res, next) => {
     new SucessResponse({
       message: "Get list Publish Successfully!",
-      metadata: await ProductFactory.searchProductByUser(req.params)
+      metadata: await ProductService.searchProductByUser(req.params)
     }).send(res)
   }
 
@@ -81,7 +81,7 @@ class ProductController {
   findAllProducts = async (req, res, next) => {
     new SucessResponse({
       message: "Get list findAllProduct Successfully!",
-      metadata: await ProductFactory.findAllProducts(req.query)
+      metadata: await ProductService.findAllProducts(req.query)
     }).send(res)
   }
 
@@ -89,7 +89,7 @@ class ProductController {
   findProduct = async (req, res, next) => {
     new SucessResponse({
       message: "Get list findProduct Successfully!",
-      metadata: await ProductFactory.findProduct({
+      metadata: await ProductService.findProduct({
         product_id: req.params.product_id
       })
     }).send(res)
