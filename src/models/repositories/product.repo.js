@@ -46,6 +46,7 @@ const publishProductByShop = async ({ product_shop, product_id }) => {
     product_shop: new Types.ObjectId(product_shop),
     _id: new Types.ObjectId(product_id)
   })
+  console.log("publishProductByShop ~ foundShop:", foundShop);
   if (!foundShop) return null
   foundShop.isDraft = false
   foundShop.isPublished = true
@@ -87,7 +88,20 @@ const queryProduct = async ({ query, limit, skip }) => {
 }
 
 const getProductById = async (productId) => {
-  return await product.findOne(convertToObjectIdMongodb(productId)).lean()
+  return await product.findOne({ _id: convertToObjectIdMongodb(productId) }).lean()
+}
+
+const checkProductByServer = async (products) => {
+  return await Promise.all(products.map(async (product) => {
+    const foundProduct = await getProductById(product.productId)
+    if (foundProduct) {
+      return {
+        price: foundProduct.product_price,
+        quantity: product.quantity,
+        productId: product.productId
+      }
+    }
+  }))
 }
 
 module.exports = {
@@ -99,5 +113,6 @@ module.exports = {
   findAllProducts,
   findProduct,
   updateProductById,
-  getProductById
+  getProductById,
+  checkProductByServer
 }
