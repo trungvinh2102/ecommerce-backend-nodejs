@@ -1,9 +1,12 @@
 'use strict'
 
 const { BadRequestError } = require("../core/error.response")
+const { cart } = require("../models/cart.model")
+const { order } = require("../models/order.model")
 const { findCartById } = require("../models/repositories/cart.repo")
 const { checkProductByServer } = require("../models/repositories/product.repo")
 const { getDiscountAmount } = require("./discount.service")
+const { acquireLock, releaseLock } = require("./redis.service")
 
 class CheckoutService {
 
@@ -70,6 +73,67 @@ class CheckoutService {
       shop_order_ids_new,
       checkout_order,
     }
+  }
+
+  //------------------------create order---------------------------
+  static async orderByUser({
+    shop_order_ids,
+    cartId,
+    userId,
+    user_address = {},
+    user_payment = {}
+  }) {
+    const { shop_order_ids_new, checkout_order } = await CheckoutService.checkoutReview({
+      cartId,
+      userId,
+      shop_order_ids
+    })
+
+    const products = shop_order_ids_new.flatMap(order => order.items_products)
+    console.log("CheckoutService ~ products:", products);
+    const acquireProduct = []
+    for (let i = 0; i < products.length; i++) {
+      const { productId, quantity } = products[i]
+      const keyLock = await acquireLock(productId, cartId, quantity)
+      acquireProduct.push(keyLock ? true : false)
+      if (keyLock) {
+        await releaseLock(keyLock)
+      }
+    }
+
+    if (acquireProduct.includes(false)) {
+      throw new BadRequestError('Một số sản phẩm đã được cập nhật vui lòng quay lại giỏ hàng!')
+    }
+
+    const newOrder = await order.create({
+      order_userId: userId,
+      order_checkout: checkout_order,
+      order_shipping: user_address,
+      order_payment: user_payment,
+      order_products: shop_order_ids_new
+    })
+
+    return newOrder
+  }
+
+  // ---------------------get all order by user--------------------
+  static async getOrdersByUser({ userId, cartId }) {
+
+  }
+
+  // ---------------------get one order by user-----------------------
+  static async getOneOrderByUser() {
+
+  }
+
+  // ----------------------cancel order by user------------------------
+  static async cancelOrderByUser() {
+
+  }
+
+  // ------------------update order status [shop | admin]---------------
+  static async updateOrderStatusByShop() {
+
   }
 }
 

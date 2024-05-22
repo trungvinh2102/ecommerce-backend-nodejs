@@ -17,7 +17,21 @@ class DiscountController {
     }).send(res)
   }
 
-  // --------------create new discount code by shop----------
+  // --------------------- update discount-------------------
+  updateDiscountCode = async (req, res, next) => {
+    new SucessResponse({
+      message: "Update discount code successfully!",
+      metadata: await DiscountService.updateDiscountCode(
+        req.params.discountId,
+        {
+          ...req.body,
+          shopId: req.user.userId,
+        }
+      )
+    }).send(res)
+  }
+
+  // --------------get discount code by shop----------
   getAllDiscountCodesByShop = async (req, res, next) => {
     new SucessResponse({
       message: "Successful Code Found!",
@@ -28,7 +42,7 @@ class DiscountController {
     }).send(res)
   }
 
-  // ------------create new discount code with product---------
+  // ------------get discount code with product---------
   getAllDiscountCodesWithProduct = async (req, res, next) => {
     new SucessResponse({
       message: "Successful Code Found!",
@@ -38,7 +52,7 @@ class DiscountController {
     }).send(res)
   }
 
-  // ----------------create new discount code--------------
+  // ----------------get discount amount--------------
   getDiscountAmount = async (req, res, next) => {
     new SucessResponse({
       message: "Successful Code getDiscountAmount!",

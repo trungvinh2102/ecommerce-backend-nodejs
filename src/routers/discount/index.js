@@ -14,6 +14,7 @@ router.get('/list-product-code', asyncHandler(discountController.getAllDiscountC
 router.use(authentication)
 
 router.post('', asyncHandler(discountController.createDiscountCode))
+router.patch('/:discountId', asyncHandler(discountController.updateDiscountCode))
 router.get('', asyncHandler(discountController.getAllDiscountCodesByShop))
 
 

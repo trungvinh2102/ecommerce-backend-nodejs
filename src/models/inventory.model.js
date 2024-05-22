@@ -15,7 +15,7 @@ const inventorySchema = new Schema(
       type: String,
       default: 'unKnow'
     },
-    iven_stock: {
+    inven_stock: {
       type: Number,
       default: true
     },
@@ -23,7 +23,7 @@ const inventorySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Shop"
     },
-    iven_reservations: {
+    inven_reservations: {
       type: Array,
       default: true
     }

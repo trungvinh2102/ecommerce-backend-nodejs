@@ -3,7 +3,7 @@
 const { NotFoundError, BadRequestError } = require("../core/error.response")
 const { parse, isValid } = require('date-fns');
 const { discount } = require("../models/discount.model")
-const { findAllDiscountCodeUnSelect, checkDiscountExitst } = require("../models/repositories/discount.repo")
+const { checkDiscountExitst, findAllDiscountCodeSelect } = require("../models/repositories/discount.repo")
 const { findAllProducts } = require("../models/repositories/product.repo")
 const { convertToObjectIdMongodb } = require("../utils")
 
@@ -31,7 +31,7 @@ class DiscountService {
     }
 
     if (startDate >= endDate) {
-      throw new BadRequestError(`Discount doesn't exist`);
+      throw new BadRequestError(`The start date must be less than the end date`);
     }
 
     const foundDiscount = await discount.findOne({
@@ -66,9 +66,62 @@ class DiscountService {
   }
 
   // ---------------------update discount code-------------------------
-  static async updateDiscountCode() {
+  static async updateDiscountCode(discountId, payload) {
+    const {
+      name, description, type, value, code, is_active,
+      start_date, end_date, max_uses, uses_count, applies_to,
+      users_used, max_uses_per_user, min_order_value, shopId, product_ids
+    } = payload;
 
+    if (!discountId) throw new BadRequestError(`Discount doen't exist!`);
+
+    if (!start_date || !end_date) {
+      throw new BadRequestError('start_date and end_date are required');
+    }
+
+    if (start_date && end_date) {
+      const startDate = parse(start_date, 'yyyy-MM-dd HH:mm:ss', new Date());
+      const endDate = parse(end_date, 'yyyy-MM-dd HH:mm:ss', new Date());
+
+      if (!isValid(startDate) || !isValid(endDate)) {
+        throw new BadRequestError('Invalid date form!');
+      }
+
+      if (startDate >= endDate) {
+        throw new BadRequestError(`The start date must be less than the end date!`);
+      }
+    }
+
+    // const parseDate = (date) => date ? parse(date, 'yyyy-MM-dd HH:mm:ss', new Date()) : undefined;
+
+    const updateFields = {
+      discount_name: name,
+      discount_description: description,
+      discount_type: type,
+      discount_value: value,
+      discount_code: code,
+      discount_is_active: is_active,
+      discount_start_date: start_date,
+      discount_end_date: end_date,
+      discount_max_uses: max_uses,
+      discount_uses_count: uses_count,
+      discount_users_used: users_used,
+      discount_max_uses_per_user: max_uses_per_user,
+      discount_min_order_value: min_order_value,
+      discount_shopId: convertToObjectIdMongodb(shopId),
+      discount_applies_to: applies_to,
+      discount_product_ids: applies_to === 'all' ? [] : product_ids,
+    };
+
+    const updatedDiscount = await discount.findByIdAndUpdate(discountId, updateFields, { new: true });
+
+    if (!updatedDiscount) {
+      throw new NotFoundError('Không tìm thấy mã giảm giá');
+    }
+
+    return updatedDiscount;
   }
+
 
   //-----------------get all discount code with product----------------
   static async getAllDiscountCodesWithProduct({ code, shopId, limit, page }) {
@@ -76,6 +129,7 @@ class DiscountService {
       discount_code: code,
       discount_shopId: convertToObjectIdMongodb(shopId)
     }).lean()
+    console.log("DiscountService ~ getAllDiscountCodesWithProduct ~ foundDiscount:", foundDiscount);
 
     if (!foundDiscount || !foundDiscount.discount_is_active) {
       throw new BadRequestError('Discount not exitst')
@@ -108,13 +162,12 @@ class DiscountService {
         select: ['product_name']
       })
     }
-    console.log("DiscountService ~ getAllDiscountCodesWithProduct ~ products:", products);
     return products
   }
 
   // ------------------get all discount code by shop-------------------
   static async getAllDiscountCodesByShop({ limit, shopId, page }) {
-    const discounts = await findAllDiscountCodeUnSelect({
+    const discounts = await findAllDiscountCodeSelect({
       model: discount,
       limit: +limit,
       page: +page,
@@ -122,7 +175,7 @@ class DiscountService {
         discount_shopId: convertToObjectIdMongodb(shopId),
         discount_is_active: true
       },
-      unSelect: ['__v', 'discount_shopId']
+      select: ['discount_code', 'discount_name']
     });
     return discounts;
   }
@@ -136,7 +189,6 @@ class DiscountService {
         discount_shopId: convertToObjectIdMongodb(shopId)
       }
     })
-    console.log("DiscountService ~ getDiscountAmount ~ foundDiscount:", foundDiscount);
 
     if (!foundDiscount) {
       throw new NotFoundError(`Discount doen't exitst`)
@@ -147,8 +199,6 @@ class DiscountService {
       discount_max_uses,
       discount_min_order_value,
       discount_users_used,
-      discount_start_date,
-      discount_end_date,
       discount_max_uses_per_user,
       discount_type,
       discount_value
@@ -160,10 +210,6 @@ class DiscountService {
 
     if (!discount_max_uses) {
       throw new NotFoundError('Discount expried')
-    }
-
-    if (new Date() < new Date(discount_start_date) || new Date() > new Date(discount_end_date)) {
-      throw new NotFoundError('Discount ecode has exprired')
     }
 
     let totalOrder
