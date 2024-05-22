@@ -8,5 +8,6 @@ const router = express.Router()
 
 router.use(authentication)
 router.post('', asyncHandler(inventoryController.addStockToInventory))
+router.patch('/update/:inventoryId', asyncHandler(inventoryController.updateStockToInventory))
 
 module.exports = router

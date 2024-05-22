@@ -92,8 +92,6 @@ class DiscountService {
       }
     }
 
-    // const parseDate = (date) => date ? parse(date, 'yyyy-MM-dd HH:mm:ss', new Date()) : undefined;
-
     const updateFields = {
       discount_name: name,
       discount_description: description,
@@ -116,7 +114,7 @@ class DiscountService {
     const updatedDiscount = await discount.findByIdAndUpdate(discountId, updateFields, { new: true });
 
     if (!updatedDiscount) {
-      throw new NotFoundError('Không tìm thấy mã giảm giá');
+      throw new NotFoundError('Discount doe not exitst');
     }
 
     return updatedDiscount;

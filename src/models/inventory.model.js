@@ -1,15 +1,16 @@
 'use strict'
 
-const { Schema, model, Types } = require('mongoose'); // Erase if already required
+const { Schema, model } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = "Inventory"
 const COLLECTION_NAME = "inventories"
 
 const inventorySchema = new Schema(
   {
-    inven_product: {
+    inven_productId: {
       type: Schema.Types.ObjectId,
-      ref: "Product"
+      ref: "Product",
+      required: true
     },
     inven_location: {
       type: String,
@@ -21,7 +22,8 @@ const inventorySchema = new Schema(
     },
     inven_shopId: {
       type: Schema.Types.ObjectId,
-      ref: "Shop"
+      ref: "Shop",
+      required: true
     },
     inven_reservations: {
       type: Array,
