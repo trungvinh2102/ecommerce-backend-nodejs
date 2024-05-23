@@ -8,10 +8,9 @@ const HEADER = {
 }
 
 const ROLESHOP = {
-  SHOP: '1',
-  WRITER: '2',
-  EDITOR: '3',
-  ADMIN: '4'
+  ADMIN: '1',
+  SHOP: '2',
+  USER: '3'
 }
 
 
