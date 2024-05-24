@@ -14,6 +14,7 @@ const {
   updateProductById
 } = require('../models/repositories/product.repo');
 const { removeUndefindedObject, updateNestedObjectParser } = require('../utils');
+const { pushNotiToSystem } = require('./notification.service');
 
 class ProductService {
 
@@ -112,13 +113,24 @@ class Product {
     const newProduct = await product.create({ ...this, _id: product_id })
 
     if (newProduct) {
-      await insertInventory({
+      const inven = await insertInventory({
         productId: newProduct._id,
         shopId: this.product_shop,
         stock: this.product_quantity
       })
-    }
+      console.log("Product ~ createProduct ~ inven:", inven);
 
+      pushNotiToSystem({
+        type: "SHOP-001",
+        receivedId: 1,
+        senderId: this.product_shop,
+        options: {
+          product_name: this.product_name,
+          shop_name: this.product_shop
+        }
+      }).then(rs => console.log(rs))
+        .catch(console.error)
+    }
     return newProduct
   }
 

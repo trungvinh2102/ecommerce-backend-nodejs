@@ -7,16 +7,16 @@ const insertInventory = async ({
   productId, shopId, stock, location = "unKnow"
 }) => {
   return await inventory.create({
-    inven_product: productId,
+    inven_productId: productId,
     inven_shopId: shopId,
-    iven_stock: stock,
+    inven_stock: stock,
     inven_location: location,
   })
 }
 
 const reservationInventory = async ({ productId, quantity, cartId }) => {
   const query = {
-    inven_product: convertToObjectIdMongodb(productId),
+    inven_productId: convertToObjectIdMongodb(productId),
     inven_stock: { $gte: quantity }
   }, updateSet = {
     $inc: {
