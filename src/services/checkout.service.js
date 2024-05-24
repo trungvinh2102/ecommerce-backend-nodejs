@@ -1,7 +1,6 @@
 'use strict'
 
 const { BadRequestError } = require("../core/error.response")
-const { cart } = require("../models/cart.model")
 const { order } = require("../models/order.model")
 const { findCartById } = require("../models/repositories/cart.repo")
 const { checkProductByServer } = require("../models/repositories/product.repo")
@@ -90,11 +89,11 @@ class CheckoutService {
     })
 
     const products = shop_order_ids_new.flatMap(order => order.items_products)
-    console.log("CheckoutService ~ products:", products);
     const acquireProduct = []
     for (let i = 0; i < products.length; i++) {
       const { productId, quantity } = products[i]
       const keyLock = await acquireLock(productId, cartId, quantity)
+      console.log("CheckoutService ~ keyLock:", keyLock);
       acquireProduct.push(keyLock ? true : false)
       if (keyLock) {
         await releaseLock(keyLock)

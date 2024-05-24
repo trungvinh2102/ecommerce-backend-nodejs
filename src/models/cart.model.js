@@ -1,6 +1,6 @@
 'use strict'
 
-const { Schema, model, Types } = require('mongoose'); // Erase if already required
+const { Schema, model } = require('mongoose'); // Erase if already required
 
 const DOCUMENT_NAME = "Cart"
 const COLLECTION_NAME = "carts"
@@ -34,7 +34,8 @@ const cartSchema = new Schema(
       createdAt: 'createdOn',
       updatedAt: 'modifiedOn'
     }
-  });
+  }
+);
 
 //Export the model
 module.exports = {

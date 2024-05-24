@@ -13,6 +13,14 @@ class CommentController {
     }).send(res)
   }
 
+  //-------------------delete comment------------------------
+  deleteComment = async (req, res, next) => {
+    new SucessResponse({
+      message: 'deleteComment success!',
+      metadata: await CommentService.deleteComment(req.body)
+    }).send(res)
+  }
+
   //--------------------get list comment------------------------
   getCommentByParentId = async (req, res, next) => {
     new SucessResponse({

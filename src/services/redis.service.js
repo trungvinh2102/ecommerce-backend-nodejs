@@ -1,14 +1,14 @@
 'use strict'
 
 const redis = require('redis')
-const { promisify } = require('util')
+const { promisify } = require('util');
 const { reservationInventory } = require('../models/repositories/inventory.repo')
 const redisClient = redis.createClient()
 
-const pexpire = promisify(redisClient.pExpire).bind(redisClient)
-const setnxAsync = promisify(redisClient.setNX).bind(redisClient)
+const setnxAsync = promisify(redisClient.setNX).bind(redisClient);
+const pexpire = promisify(redisClient.pExpire).bind(redisClient);
 
-const acquireLock = async (productId, quantity, cartId) => {
+const acquireLock = async ({ productId, quantity, cartId }) => {
   const key = `lock_v2024_${productId}`;
   const retryTimes = 10
   const expireTime = 3000;
@@ -17,15 +17,17 @@ const acquireLock = async (productId, quantity, cartId) => {
     const result = await setnxAsync(key, expireTime);
     console.log("acquireLock ~ result:", result);
     if (result === 1) {
-
-      const isReservetion = await reservationInventory({
+      const isReservation = await reservationInventory({
         productId,
         cartId,
         quantity
       })
-      if (isReservetion.modifiedCount) {
-        await pexpire(key, expireTime)
-        return key
+      if (isReservation.modifiedCount) {
+        await pexpire(key, expireTime);
+        return key;
+      } else {
+        // Nếu không đặt chỗ thành công, giải phóng khóa
+        await delAsync(key);
       }
     } else {
       await new Promise((resolve) => setTimeout(resolve, 50))
