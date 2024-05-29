@@ -29,7 +29,7 @@ class NotificationService {
     return newNoti
   }
 
-  // -----------------------------------------------
+  // --------------------get all noti by user-----------------
   static async getAllNotiByUser({
     userId = 1,
     type = "ALL",
@@ -45,11 +45,17 @@ class NotificationService {
       {
         $project: {
           noti_type: 1,
-          noti_content: 1,
           noti_receivedId: 1,
           noti_senderId: 1,
           noti_options: 1,
-          createAt: 1
+          createAt: 1,
+          noti_content: {
+            $concat: [
+              "$noti_options.shop_name",
+              " vừa mới thêm một sản phẩm mới: ",
+              "$noti_options.product_name"
+            ]
+          }
         }
       }
     ]
