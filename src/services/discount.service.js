@@ -5,7 +5,8 @@ const { parse, isValid } = require('date-fns');
 const { discount } = require("../models/discount.model")
 const { checkDiscountExitst, findAllDiscountCodeSelect } = require("../models/repositories/discount.repo")
 const { findAllProducts } = require("../models/repositories/product.repo")
-const { convertToObjectIdMongodb } = require("../utils")
+const { convertToObjectIdMongodb } = require("../utils");
+const { binDiscount } = require("../models/bin/bin.discount.model");
 
 class DiscountService {
 
@@ -122,45 +123,41 @@ class DiscountService {
 
 
   //-----------------get all discount code with product----------------
-  static async getAllDiscountCodesWithProduct({ code, shopId, limit, page }) {
+  static async getAllDiscountCodesWithProduct({ codeId, shopId, limit, page }) {
     const foundDiscount = await discount.findOne({
-      discount_code: code,
+      discount_code: codeId,
       discount_shopId: convertToObjectIdMongodb(shopId)
     }).lean()
-    console.log("DiscountService ~ getAllDiscountCodesWithProduct ~ foundDiscount:", foundDiscount);
 
     if (!foundDiscount || !foundDiscount.discount_is_active) {
       throw new BadRequestError('Discount not exitst')
     }
 
     const { discount_applies_to, discount_product_ids } = foundDiscount
-    let products = []
-    if (discount_applies_to === "all") {
-      products = await findAllProducts({
-        filter: {
-          product_shop: convertToObjectIdMongodb(shopId),
-          isPublish: true
-        },
-        limit: +limit,
-        page: +page,
-        sort: 'ctime',
-        select: ['product_name']
-      })
+    let filter
+    if (discount_applies_to === 'all') {
+      // get all
+      filter = {
+        product_shop: convertToObjectIdMongodb(shopId),
+        isPublished: true
+      }
     }
 
-    if (discount_applies_to === "specific") {
-      products = await findAllProducts({
-        filter: {
-          _id: { $in: discount_product_ids },
-          isPublish: true
-        },
-        limit: +limit,
-        page: +page,
-        sort: 'ctime',
-        select: ['product_name']
-      })
+    if (discount_applies_to === 'specific') {
+      // get by product ids
+      filter = {
+        _id: { $in: discount_product_ids },
+        isPublished: true
+      }
     }
-    return products
+
+    return await findAllProducts({
+      filter,
+      limit: +limit,
+      page: +page,
+      sort: 'ctime',
+      select: ['product_name']
+    })
   }
 
   // ------------------get all discount code by shop-------------------
@@ -239,14 +236,25 @@ class DiscountService {
   }
 
 
-  //---------------------delete discount code--------------------------
-  static async deleteDiscountCode({ shopId, codeId }) {
-    const deleted = await discount.findOneAndDelete({
-      discount_code: codeId,
-      discount_shopId: convertToObjectIdMongodb(shopId)
+  //---------------------move to bin discount code--------------------------
+  static async moveToBinDiscountCode({ shopId, codeId }) {
+    const foundDiscount = await checkDiscountExitst({
+      model: discount,
+      filter: {
+        discount_code: codeId,
+        discount_shopId: convertToObjectIdMongodb(shopId)
+      }
     })
 
-    return deleted
+    if (!foundDiscount) throw new NotFoundError(`Discount doen't exists!`)
+
+    const moveToBin = await binDiscount.create(foundDiscount)
+
+    if (!moveToBin) throw new NotFoundError(`Error moving discount to bin!`)
+
+    await discount.deleteOne({ _id: foundDiscount._id })
+
+    return moveToBin
   }
 
   //---------------------cancel discount code-------------------------

@@ -16,6 +16,8 @@ router.use(authentication)
 router.post('', asyncHandler(discountController.createDiscountCode))
 router.patch('/:discountId', asyncHandler(discountController.updateDiscountCode))
 router.get('', asyncHandler(discountController.getAllDiscountCodesByShop))
+router.post('/move-to-bin', asyncHandler(discountController.moveToBinDiscountCode))
+router.get('/search/:keySearch', discountController.cancelDiscountCode)
 
 
 module.exports = router

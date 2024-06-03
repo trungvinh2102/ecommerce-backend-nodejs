@@ -62,6 +62,29 @@ class DiscountController {
     }).send(res)
   }
 
+  // ---------------move to bin discount code --------------
+  moveToBinDiscountCode = async (req, res, next) => {
+    new SucessResponse({
+      message: "Move to bin discount code successfully!",
+      metadata: await DiscountService.moveToBinDiscountCode({
+        ...req.query,
+        shopId: req.user.userId
+      })
+    }).send(res)
+  }
+
+
+  // --------------cancel discount code --------------
+  cancelDiscountCode = async (req, res, next) => {
+    new SucessResponse({
+      message: "Cancel discount code successfully!",
+      metadata: await DiscountService.cancelDiscountCode({
+        ...req.query,
+        shopId: req.user.userId
+      })
+    }).send(res)
+  }
+
 }
 
 module.exports = new DiscountController()
