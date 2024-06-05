@@ -1,10 +1,11 @@
 'use strict'
 
 const amqp = require('amqplib')
+const { rabbitmq: { amqpUri } } = require('../../../configs/config')
 
 const runConsumer = async () => {
   try {
-    const connection = await amqp.connect('amqp://guest:guest@localhost')
+    const connection = await amqp.connect(amqpUri)
     const channel = await connection.createChannel()
 
     const queueName = 'test-topic'

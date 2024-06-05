@@ -2,6 +2,7 @@
 
 
 const amqp = require('amqplib')
+const { rabbitmq: { amqpUri } } = require('../../../configs/config')
 const messages = 'New product: Watch'
 
 const log = console.log
@@ -12,7 +13,7 @@ console.log = (function () {
 
 const runProducer = async () => {
   try {
-    const connection = await amqp.connect('amqp://guest:guest@localhost')
+    const connection = await amqp.connect(amqpUri)
     const channel = await connection.createChannel()
 
     const notificationExchange = 'notificationExchange' // direct
