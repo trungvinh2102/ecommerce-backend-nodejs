@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const { Types } = require('mongoose')
+const crypto = require('crypto')
 
 const convertToObjectIdMongodb = id => new Types.ObjectId(id)
 
@@ -43,6 +44,8 @@ const updateNestedObjectParser = obj => {
   return final
 }
 
+const ramdomImageName = () => crypto.randomBytes(16).toString('hex')
+
 
 module.exports = {
   getInfoData,
@@ -50,5 +53,6 @@ module.exports = {
   unGetSelectData,
   removeUndefindedObject,
   updateNestedObjectParser,
-  convertToObjectIdMongodb
+  convertToObjectIdMongodb,
+  ramdomImageName
 }

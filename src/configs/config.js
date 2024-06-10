@@ -24,5 +24,13 @@ module.exports = {
     cloud_name: process.env.CLOUDARY_CLOUND_NAME,
     api_key: process.env.CLOUDARY_API_KEY,
     api_secret: process.env.CLOUDARY_API_SECRET
+  },
+  aws: {
+    aws_bucket_name: process.env.AWS_BUCKET_NAME,
+    aws_bucket_access_key: process.env.AWS_BUCKET_ACCESS_KEY,
+    aws_bucket_secret_key: process.env.AWS_BUCKET_SECRECT_KEY,
+    aws_bucket_clound_front_domain_name: process.env.AWS_BUCKET_CLOUND_FRONT_DOMAIN_NAME,
+    aws_bucket_clound_front_key_group: process.env.AWS_BUCKET_CLOUND_FRONT_KEY_GROUP,
+    aws_bucket_private_key_id: process.env.AWS_BUCKET_PRIVATE_KEY_ID
   }
 }

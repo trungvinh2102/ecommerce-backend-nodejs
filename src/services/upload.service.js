@@ -1,6 +1,49 @@
 'use strict'
 
+const { PutObjectCommand, GetObjectCommand, DeleteBucketCommand } = require('@aws-sdk/client-s3')
 const cloudinary = require('../configs/cloudinary.config')
+const {
+  aws: {
+    aws_bucket_name,
+    aws_bucket_clound_front_domain_name,
+    aws_bucket_clound_front_key_group,
+    aws_bucket_private_key_id
+  } }
+  = require('../configs/config')
+const { s3 } = require('../configs/s3.config')
+const { getSignedUrl } = require("@aws-sdk/cloudfront-signer"); // CJS
+const { ramdomImageName } = require('../utils')
+
+
+// upload file s3client
+const uploadImageFromLocalS3 = async ({ file }) => {
+  try {
+    const imageName = ramdomImageName()
+    const command = new PutObjectCommand({
+      Bucket: aws_bucket_name,
+      Key: imageName,
+      Body: file.buffer,
+      ContentType: 'image/jpeg'
+    })
+
+    const result = await s3.send(command)
+    console.log("uploadImageFromLocalS3 ~ result:", result);
+    const signedUrl = getSignedUrl({
+      url: `${aws_bucket_clound_front_domain_name}/${imageName}`,
+      keyPairId: aws_bucket_clound_front_key_group,
+      dateLessThan: new Date(Date.now() + 1000 * 60).toISOString(),
+      privateKey: aws_bucket_private_key_id,
+    });
+    console.log("uploadImageFromLocalS3 ~ signedUrl:", signedUrl);
+    return {
+      signedUrl,
+      result
+    }
+  } catch (error) {
+    console.error("uploadImageFromLocalS3 ~ error:", error);
+  }
+}
+
 
 const uploadImageFromUrl = async () => {
   try {
@@ -18,7 +61,7 @@ const uploadImageFromUrl = async () => {
   }
 }
 
-const uploadImageFromLocal = async ({ path, folderName = 'product/8409' }) => {
+const uploadImageFromLocalCloudinary = async ({ path, folderName = 'product/8409' }) => {
   try {
     const result = await cloudinary.uploader.upload(path, {
       public_id: 'thumb',
@@ -39,7 +82,10 @@ const uploadImageFromLocal = async ({ path, folderName = 'product/8409' }) => {
   }
 }
 
+
+
 module.exports = {
   uploadImageFromUrl,
-  uploadImageFromLocal
+  uploadImageFromLocalCloudinary,
+  uploadImageFromLocalS3
 }
