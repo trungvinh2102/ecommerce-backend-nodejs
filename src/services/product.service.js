@@ -1,5 +1,6 @@
 'use strict'
 
+const { NotifyType } = require('../contants');
 const { BadRequestError } = require('../core/error.response');
 const { product, clothing, electronic, furniture, watch } = require('../models/product.model');
 const { insertInventory } = require('../models/repositories/inventory.repo');
@@ -118,10 +119,9 @@ class Product {
         shopId: this.product_shop,
         stock: this.product_quantity
       })
-      console.log("Product ~ createProduct ~ inven:", inven);
 
       pushNotiToSystem({
-        type: "SHOP-001",
+        type: NotifyType.SHOP_001,
         receivedId: 1,
         senderId: this.product_shop,
         options: {
@@ -130,6 +130,7 @@ class Product {
         }
       }).then(rs => console.log(rs))
         .catch(console.error)
+      console.log("Product ~ createProduct ~ inven:", inven);
     }
     return newProduct
   }

@@ -30,7 +30,7 @@ const keyTokenSchema = new Schema({
   }
 },
   {
-    timeseries: true,
+    timestamps: true,
     collection: COLLECTION_NAME
   }
 );

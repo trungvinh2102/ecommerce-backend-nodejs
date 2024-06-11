@@ -23,7 +23,7 @@ const apiKeySchema = new Schema({
   },
 },
   {
-    timeseries: true,
+    timestamps: true,
     collection: COLLECTION_NAME
   }
 );

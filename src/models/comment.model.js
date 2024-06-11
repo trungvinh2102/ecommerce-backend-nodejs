@@ -37,7 +37,7 @@ const commentSchema = new Schema(
     }
   },
   {
-    timeseries: true,
+    timestamps: true,
     collection: COLLECTION_NAME
   }
 );

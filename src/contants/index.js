@@ -13,8 +13,15 @@ const ROLESHOP = {
   USER: '3'
 }
 
+const NotifyType = {
+  SHOP_001: "SHOP-001",
+  ORDER_001: 'ORDER-001',
+  ORDER_001: 'ORDER-002',
+  PROMOTION: 'PROMOTION-001'
+}
 
 module.exports = {
   HEADER,
-  ROLESHOP
+  ROLESHOP,
+  NotifyType
 }

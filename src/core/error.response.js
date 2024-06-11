@@ -1,6 +1,6 @@
 'use strict'
 
-const { StatusCodes, ReasonPhrases } = require('../utils/httpStatusCode')
+const { StatusCodes, ReasonPhrases } = require('./httpStatusCode')
 
 class ErrorResponse extends Error {
 
@@ -13,7 +13,7 @@ class ErrorResponse extends Error {
 
 class ConflictRequestError extends ErrorResponse {
 
-  constructor(message = ReasonPhrases.CONFLICT, status = StatusCodes.FORBIDDEN) {
+  constructor(message = ReasonPhrases.CONFLICT, status = StatusCodes.CONFLICT) {
     super(message, status)
   }
 
@@ -21,7 +21,7 @@ class ConflictRequestError extends ErrorResponse {
 
 class BadRequestError extends ErrorResponse {
 
-  constructor(message = ReasonPhrases.CONFLICT, status = StatusCodes.FORBIDDEN) {
+  constructor(message = ReasonPhrases.BAD_REQUEST, status = StatusCodes.BAD_REQUEST) {
     super(message, status)
   }
 
