@@ -1,7 +1,7 @@
 'use strict'
 
 const { NotifyType } = require("../contants")
-const { BadRequestError } = require("../core/error.response")
+const { BadRequestError } = require("./error.response")
 const notificationModel = require("../models/notification.model")
 
 class NotificationService {
@@ -13,9 +13,8 @@ class NotificationService {
 
   static getContent(type, payload) {
     const notifyClassFactory = NotificationService.notifyTypeRegistry[type]
-    if (!notifyClassFactory) throw new BadRequestError('Bad request');
+    if (!notifyClassFactory) throw new BadRequestError('Error')
 
-    return notifyClassFactory(payload).buidContent()
   }
 
   // ----------------- push notification------------------
@@ -25,15 +24,22 @@ class NotificationService {
     receivedId = 1,
     options = {}
   }) {
-    let notifyContent = await NotificationService.getContent()
+    let noti_content = await NotificationService.getContent(type, options)
+    if (type = NotifyType.SHOP_001) {
+      noti_content = `SHOP XXX vừa thêm một sản phẩm: AAAA`
+    } else if (type = 'PROMOTION-001') {
+      noti_content = `SHOP XXX vừa thêm một voucher: BBBB`
+    }
 
-    return await notificationModel.create({
+    const newNoti = await notificationModel.create({
       noti_type: type,
-      noti_content: notifyContent,
       noti_senderId: senderId,
       noti_receivedId: receivedId,
+      noti_content: noti_content,
       noti_options: options
     })
+
+    return newNoti
   }
 
   // --------------------get all noti by user-----------------
@@ -56,7 +62,13 @@ class NotificationService {
           noti_senderId: 1,
           noti_options: 1,
           createAt: 1,
-          noti_content: 1
+          noti_content: {
+            $concat: [
+              "$noti_options.shop_name",
+              " vừa mới thêm một sản phẩm mới: ",
+              "$noti_options.product_name"
+            ]
+          }
         }
       }
     ]
